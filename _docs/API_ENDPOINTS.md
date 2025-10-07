@@ -1,6 +1,6 @@
 # API Endpoints Documentation
 
-This document describes the API endpoints created for the wallet authentication system.
+This document describes the API endpoints for the CoreMint NFT platform, including authentication, NFT management, and collection features.
 
 ## Authentication Endpoints
 
@@ -90,19 +90,150 @@ curl -X GET http://localhost:3000/api/auth/me \
   -H "Authorization: Bearer your_jwt_token_here"
 ```
 
+## NFT Management Endpoints
+
+### GET `/api/nfts`
+
+Retrieves NFTs owned by the authenticated user.
+
+**Headers:**
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Response:**
+```json
+{
+  "nfts": [
+    {
+      "id": "string",
+      "name": "string",
+      "description": "string",
+      "image": "string",
+      "metadata": {},
+      "isMinted": false,
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+### POST `/api/nfts`
+
+Creates a new NFT.
+
+**Headers:**
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Request Body:**
+```json
+{
+  "name": "string",
+  "description": "string",
+  "image": "string",
+  "metadata": {},
+  "collectionId": "string"
+}
+```
+
+**Response:**
+```json
+{
+  "nft": {
+    "id": "string",
+    "name": "string",
+    "description": "string",
+    "image": "string",
+    "metadata": {},
+    "isMinted": false,
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+### POST `/api/nfts/mint`
+
+Mints an NFT to the Stacks blockchain.
+
+**Headers:**
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Request Body:**
+```json
+{
+  "nftId": "string",
+  "txHash": "string",
+  "contractAddress": "string",
+  "tokenId": "string"
+}
+```
+
+## Collection Endpoints
+
+### GET `/api/collections`
+
+Retrieves collections. Use `?public=true` to get public collections only.
+
+**Headers:**
+```
+Authorization: Bearer <jwt_token> (optional for public collections)
+```
+
+**Response:**
+```json
+{
+  "collections": [
+    {
+      "id": "string",
+      "name": "string",
+      "description": "string",
+      "image": "string",
+      "isPublic": true,
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+### POST `/api/collections`
+
+Creates a new collection.
+
+**Headers:**
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Request Body:**
+```json
+{
+  "name": "string",
+  "description": "string",
+  "image": "string",
+  "banner": "string",
+  "isPublic": true
+}
+```
+
 ## Environment Variables
 
 Make sure to set the following environment variables:
 
 ```env
 # Database
-DATABASE_URL="mongodb://localhost:27017/stacks-next-template"
+DATABASE_URL="mongodb://localhost:27017/coremint"
 
 # JWT Secret (change this in production)
-JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
+SECRET_KEY="your-super-secret-jwt-key-change-this-in-production"
 
 # API Configuration
 NEXT_PUBLIC_API_URL="http://localhost:3000/api"
+NEXT_PUBLIC_APP_NAME="CoreMint"
+NEXT_PUBLIC_STACKS_NETWORK="devnet"
 ```
 
 ## Database Schema

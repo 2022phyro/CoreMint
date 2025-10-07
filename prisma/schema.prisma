@@ -11,13 +11,80 @@ datasource db {
 }
 model User {
   id                 String   @id @default(auto()) @map("_id") @db.ObjectId
-  walletAddress      String
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  walletAddress      String   @unique
+  username          String?
+  bio               String?
+  avatar            String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  lastLoginAt        DateTime?
-  loginCount         Int      @default(0)
-  connectionHistory  Json
+  lastLoginAt       DateTime?
+  loginCount        Int      @default(0)
+  connectionHistory Json
+
+  // Relations
+  nfts              NFT[]
+  collections       Collection[]
+  transactions      Transaction[]
 
   @@map("users")
+}
+
+model Collection {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  image       String?
+  banner      String?
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  nfts        NFT[]
+
+  @@map("collections")
+}
+
+model NFT {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  image       String
+  metadata    Json
+  tokenId     String?  // Stacks blockchain token ID
+  contractAddress String? // Stacks contract address
+  isMinted    Boolean  @default(false)
+  mintedAt    DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  ownerId       String
+  owner         User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  collectionId  String?
+  collection    Collection? @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  transactions  Transaction[]
+
+  @@map("nfts")
+}
+
+model Transaction {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  txHash        String   @unique
+  type          String   // 'mint', 'transfer', 'burn'
+  status        String   // 'pending', 'confirmed', 'failed'
+  blockHeight   Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  nftId         String?
+  nft           NFT?     @relation(fields: [nftId], references: [id], onDelete: SetNull)
+
+  @@map("transactions")
 }

@@ -4,7 +4,7 @@ import clientConfig, { envSchema as clientEnvSchema } from "./client";
 
 const envSchema = z
   .object({
-    DATABASE_URL: z.url(),
+    DATABASE_URL: z.string().url(),
     SECRET_KEY: z.string().min(32),
   })
   .extend(clientEnvSchema.shape);

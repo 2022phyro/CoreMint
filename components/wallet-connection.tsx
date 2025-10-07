@@ -76,9 +76,9 @@ export function WalletConnection() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Stacks DApp</CardTitle>
+          <CardTitle className="text-2xl font-bold">CoreMint</CardTitle>
           <CardDescription>
-            Connect your Stacks wallet to get started
+            Connect your Stacks wallet to start minting NFTs
           </CardDescription>
         </CardHeader>
 
@@ -109,18 +109,16 @@ export function WalletConnection() {
           ) : (
             <div className="space-y-4">
               <div className="p-4 bg-green-50 border border-green-200 rounded-md">
-                {
-                  session?.user && (
-                    <>
-                      <p className="text-sm font-medium text-green-800">
-                        User Logged In
-                      </p>
-                      <p className="text-xs text-green-600 mt-1 break-all mb-4">
-                        User ID: {session.user.id}
-                      </p>
-                    </>
-                  )
-                }
+                {session?.user && (
+                  <>
+                    <p className="text-sm font-medium text-green-800">
+                      User Logged In
+                    </p>
+                    <p className="text-xs text-green-600 mt-1 break-all mb-4">
+                      User ID: {session.user.id}
+                    </p>
+                  </>
+                )}
                 <p className="text-sm font-medium text-green-800">
                   Wallet Connected
                 </p>
@@ -135,42 +133,40 @@ export function WalletConnection() {
               </div>
 
               <div className="flex gap-2">
-                {
-                  session ? (
+                {session ? (
+                  <Button
+                    onClick={handleDisconnect}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    Logout
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      onClick={handleLogin}
+                      disabled={isLoggingIn}
+                      className="flex-1"
+                    >
+                      {isLoggingIn ? "Logging in..." : "Login"}
+                    </Button>
+
                     <Button
                       onClick={handleDisconnect}
                       variant="outline"
                       className="flex-1"
                     >
-                      Logout
+                      Disconnect
                     </Button>
-                  ) : (
-                    <>
-                      <Button
-                        onClick={handleLogin}
-                        disabled={isLoggingIn}
-                        className="flex-1"
-                      >
-                        {isLoggingIn ? "Logging in..." : "Login"}
-                      </Button>
-
-                      <Button
-                        onClick={handleDisconnect}
-                        variant="outline"
-                        className="flex-1"
-                      >
-                        Disconnect
-                      </Button>
-                    </>
-                  )
-                }
+                  </>
+                )}
               </div>
             </div>
           )}
 
           <div className="pt-4 border-t">
             <p className="text-xs text-gray-500 text-center">
-              This is a template for Stacks blockchain applications
+              CoreMint - NFT minting platform on Stacks blockchain
             </p>
           </div>
         </CardContent>

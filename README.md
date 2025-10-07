@@ -1,17 +1,33 @@
-# Stacks Next.js Template
+# CoreMint
 
-A production-ready Next.js template for building Stacks blockchain applications with wallet authentication, smart contract integration, and modern UI components.
+A production-ready NFT minting platform built on Stacks blockchain with Next.js, featuring wallet authentication, smart contract integration, and modern UI components.
+
+## 🎯 Project Goals
+
+- **🎨 NFT Creation**: Enable users to create, mint, and manage NFTs on Stacks blockchain
+- **🔗 Wallet Integration**: Seamless Stacks wallet connection and authentication
+- **📱 Modern UX**: Beautiful, responsive interface with intuitive user flows
+- **🔐 Security**: Secure authentication with wallet signatures and JWT tokens
+- **⚡ Performance**: Fast, optimized platform with proper error handling
+
+## 🚫 Non-Goals
+
+- Multi-chain support (Stacks only)
+- Complex marketplace features (focus on minting)
+- Advanced trading functionality
+- Mobile app development (web-first)
 
 ## 🚀 Features
 
+- **🎨 NFT Minting**: Create, mint, and manage NFTs on Stacks blockchain
 - **🔗 Wallet Integration**: Seamless Stacks wallet connection using `@stacks/connect`
 - **🔐 JWT Authentication**: Secure authentication with wallet signatures
 - **📱 Modern UI**: Beautiful, responsive interface with Tailwind CSS and Radix UI
-- **🗄️ Database Ready**: MongoDB integration with Prisma ORM
+- **🗄️ Database Ready**: MongoDB integration with Prisma ORM for NFT metadata
 - **📝 Type Safety**: Full TypeScript support with proper type definitions
 - **🛠️ Smart Contracts**: Clarinet integration for Stacks smart contract development
 - **🎨 Component Library**: Pre-built UI components following design system patterns
-- **📊 API Routes**: RESTful API endpoints for authentication and user management
+- **📊 API Routes**: RESTful API endpoints for authentication, NFT management, and user data
 - **🔧 Developer Experience**: Biome for linting/formatting, hot reload, and more
 
 ## 🏗️ Project Structure
@@ -47,12 +63,18 @@ A production-ready Next.js template for building Stacks blockchain applications 
 - MongoDB database
 - Stacks wallet (Hiro Wallet, Xverse, etc.)
 
+### Target Networks
+
+- **Development**: Stacks Devnet (default)
+- **Testing**: Stacks Testnet  
+- **Production**: Stacks Mainnet
+
 ### Installation
 
-1. **Clone the template**
+1. **Clone the repository**
    ```bash
-   git clone <your-repo-url>
-   cd stacks-next-template
+   git clone https://github.com/2022phyro/CoreMint.git
+   cd CoreMint
    ```
 
 2. **Install dependencies**
@@ -68,13 +90,15 @@ A production-ready Next.js template for building Stacks blockchain applications 
    Update `.env.local` with your configuration:
    ```env
    # Database
-   DATABASE_URL="mongodb://localhost:27017/stacks-next-template"
+   DATABASE_URL="mongodb://localhost:27017/coremint"
    
    # JWT Secret (change this in production)
-   JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
+   SECRET_KEY="your-super-secret-jwt-key-change-this-in-production"
    
    # API Configuration
    NEXT_PUBLIC_API_URL="http://localhost:3000/api"
+   NEXT_PUBLIC_APP_NAME="CoreMint"
+   NEXT_PUBLIC_STACKS_NETWORK="devnet"
    ```
 
 4. **Set up the database**
@@ -101,6 +125,7 @@ pnpm start            # Start production server
 # Code Quality
 pnpm lint             # Run Biome linter
 pnpm format           # Format code with Biome
+pnpm typecheck        # Run TypeScript type checking
 
 # Database
 pnpm db:generate      # Generate Prisma client
@@ -140,24 +165,61 @@ All components follow design system patterns and support dark mode.
 
 ## 🗄️ Database Schema
 
-The template uses MongoDB with Prisma ORM. The main user model includes:
+CoreMint uses MongoDB with Prisma ORM. The main entities include:
 
 ```prisma
 model User {
   id                 String   @id @default(auto()) @map("_id") @db.ObjectId
-  walletAddress      String
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  lastLoginAt        DateTime?
-  loginCount         Int      @default(0)
-  connectionHistory  Json
+  walletAddress      String   @unique
+  username          String?
+  bio               String?
+  avatar            String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  lastLoginAt       DateTime?
+  loginCount        Int      @default(0)
+  connectionHistory Json
+  nfts              NFT[]
+  collections       Collection[]
+  transactions      Transaction[]
   @@map("users")
+}
+
+model NFT {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  image       String
+  metadata    Json
+  tokenId     String?
+  contractAddress String?
+  isMinted    Boolean  @default(false)
+  mintedAt    DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  ownerId     String
+  collectionId String?
+  @@map("nfts")
+}
+
+model Collection {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  image       String?
+  banner      String?
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  ownerId     String
+  nfts        NFT[]
+  @@map("collections")
 }
 ```
 
 ## 🔗 Smart Contract Integration
 
-The template includes Clarinet configuration for Stacks smart contract development:
+CoreMint includes Clarinet configuration for Stacks smart contract development:
 
 - **Clarinet.toml**: Project configuration
 - **contracts/**: Smart contract source files
@@ -187,7 +249,7 @@ The template includes Clarinet configuration for Stacks smart contract developme
 ## 📚 Documentation
 
 - [`_docs/API_ENDPOINTS.md`](_docs/API_ENDPOINTS.md) - Complete API documentation
-- [Cursor Rules](.cursor/rules/) - Development guidelines and patterns
+- [`.cursor/rules/coremint.md`](.cursor/rules/coremint.md) - Development guidelines and patterns
 
 ## 🚀 Deployment
 
@@ -200,7 +262,7 @@ The template includes Clarinet configuration for Stacks smart contract developme
 
 ### Other Platforms
 
-The template works with any platform that supports Next.js:
+CoreMint works with any platform that supports Next.js:
 - Netlify
 - Railway
 - DigitalOcean App Platform
@@ -231,7 +293,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 If you encounter any issues or have questions:
 
 1. Check the [documentation](_docs/)
-2. Search existing [GitHub Issues](https://github.com/Mcsavvy/stacks-next-template/issues)
+2. Search existing [GitHub Issues](https://github.com/2022phyro/CoreMint/issues)
 3. Create a new issue with detailed information
 
 ---

@@ -24,6 +24,19 @@ export async function authenticateRequest(request: NextRequest) {
   return { user, payload };
 }
 
+export async function verifyAuth(request: NextRequest) {
+  try {
+    const { user, payload } = await authenticateRequest(request);
+    return {
+      userId: user.id,
+      walletAddress: user.walletAddress,
+      payload,
+    };
+  } catch (_error) {
+    return null;
+  }
+}
+
 export function createAuthError(message: string = "Unauthorized") {
   return new Response(JSON.stringify({ error: message }), {
     status: 401,

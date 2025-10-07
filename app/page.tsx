@@ -1,5 +1,5 @@
-import { WalletConnection } from "@/components/wallet-connection";
+import { NFTDashboard } from "@/components/nft-dashboard";
 
 export default function Home() {
-  return <WalletConnection />;
+  return <NFTDashboard />;
 }
